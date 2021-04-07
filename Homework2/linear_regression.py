@@ -1,6 +1,9 @@
 import numpy as np
 import mltools as ml
+import matplotlib
 import matplotlib.pyplot as plt
+
+plt.style.use('seawitch.mplstyle')
 
 data = np.genfromtxt("/Users/brookeryan/Developer/CS273A Homework/data/curve80.txt",
                      delimiter=None)  # load the text file
@@ -23,22 +26,32 @@ print("Yte shape = {s}".format(s=Yte.shape))
 #
 lr = ml.linear.linearRegress(Xtr, Ytr)  # create and train model
 xs = np.linspace(0, 10, 200)  # densely sample 200 evenly-spaced x-values from 0 to 10
-print(xs)
 xs = xs[:, np.newaxis]  # force "xs" to be an Mx1 matrix (M data points with 1 feature)
-# print(xs)
 ys = lr.predict(xs)  # make predictions at xs
-print(ys)
 #
 # (a) Plot the training data points along with your prediction function in a single plot. (10 points)
 #
 # TODO: is this right? or does the plot portion require multiplication by the theta points like in linear regression formula?
-plt.plot(xs, ys)
-plt.scatter(Xtr, Ytr)
+# plt.style.use('seaborn-brooke')
+fig, ax = plt.subplots()
+ax.set_title('Linear Regression - Training Data vs. Prediction Function')
+ax.set_xlabel('X Training - $X_{tr}$')
+ax.set_ylabel('Y Training - $Y_{tr}$')
+
+ax.plot(xs, ys, label='Prediction Function')
+ax.plot(Xtr, Ytr, 'o', label='Training Data')
+ax.legend()
+# plt.show()
 #
 # (b) Print the linear regression coefficients (lr.theta) and verify that they match your plot. (5 points)
 # I think for this one what we want to do is
 #
-print("Linear regression coefficients = theta_0 = {t0}\n theta_1 = {t1}".format(t0=lr.theta[0,0], t1=lr.theta[0,1]))
+print("Linear regression coefficients = theta_0 = {t0}\n theta_1 = {t1}".format(t0=lr.theta[0, 0], t1=lr.theta[0, 1]))
+
+# Should match the y-intercept and the slope:
+ax.plot(0, lr.theta[0, 0], 'o', label=r"$\Theta_0$")
+ax.plot(xs, xs*lr.theta[0,1] + lr.theta[0,0]*0.9, label=r"$x_s*\Theta_1$")
+
 
 #
 # (c) What is the mean squared error of the predictions on the training and test data? (10 points)
@@ -46,6 +59,7 @@ print("Linear regression coefficients = theta_0 = {t0}\n theta_1 = {t1}".format(
 mean_square_error = lr.mse(Xtr, Ytr)
 print("Mean square error = {m}".format(m=mean_square_error))
 
+ax.legend()
 plt.show()
 
 #
